@@ -16,6 +16,8 @@ jobs:
         run: pytest -q
       - name: Reliability gate (hardened agent vs baseline)
         run: agentproof gate --agent hardened --baseline baseline.json
+      - name: Replay the recorded Claude run (offline, no API key)
+        run: agentproof compare --agents replay:cassettes/claude.jsonl --runs 5 --chaos 0.3
       - name: Head-to-head report
         run: |
           agentproof compare --out reports

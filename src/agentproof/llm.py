@@ -71,8 +71,9 @@ def _post_json(url: str, headers: dict[str, str], body: dict[str, Any], timeout:
 
 
 class AnthropicClient:
-    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json, max_tokens: int = 1024) -> None:
-        self.model, self.max_tokens, self._post = model, max_tokens, post
+    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json, max_tokens: int = 1024, temperature: float | None = None) -> None:
+        # `temperature` is omitted by default: some current models reject it ("deprecated for this model").
+        self.model, self.max_tokens, self._post, self.temperature = model, max_tokens, post, temperature
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
         if not self.api_key:
             raise SystemExit("ANTHROPIC_API_KEY is not set")
@@ -81,7 +82,8 @@ class AnthropicClient:
         r = self._post(
             "https://api.anthropic.com/v1/messages",
             {"x-api-key": self.api_key, "anthropic-version": "2023-06-01"},
-            {"model": self.model, "max_tokens": self.max_tokens, "temperature": 0, "system": system, "messages": messages, "tools": tools},
+            {"model": self.model, "max_tokens": self.max_tokens, "system": system, "messages": messages, "tools": tools,
+             **({"temperature": self.temperature} if self.temperature is not None else {})},
         )
         return {"content": r["content"], "stop_reason": r.get("stop_reason", "end_turn")}
 

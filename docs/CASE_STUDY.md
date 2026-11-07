@@ -50,7 +50,7 @@ Still perfectly safe (idempotency, validation and the fail-safe do not depend on
 `docs/sample/failsafe-trace.jsonl` is a recorded run where five consecutive reads failed (timeout, malformed `{}`, three 503s). The hardened agent stopped, escalated to a human and sent nothing, rather than guessing. `agentproof replay` re-runs any agent against that exact recording: the hardened agent reproduces it call for call; the naive agent diverges on call 2 with a `KeyError`. That is the workflow for fixing a failure you cannot rerun on demand: record, replay the fix against the recording, then gate it in CI.
 
 ## What this does not show
-- The agents are deterministic scripted policies, and the naive one is a strawman. The result is about the harness and the three bug classes, not about any model. For a model, see the cassette workflow in the README; no real-model numbers are published here.
+- The agents are deterministic scripted policies, and the naive one is a strawman. The result is about the harness and the three bug classes, not about any model. For a real model, see the README: Claude was run on the same chaos (40 runs, 0 unsafe), with caveats stated there. This case study itself uses only the scripted agents.
 - Eight scenarios and one fault model. The structure scales; the coverage is small.
 - 160 runs per agent per setting, one base seed. The differences above are far larger than seed noise, but I have not computed confidence intervals.
 

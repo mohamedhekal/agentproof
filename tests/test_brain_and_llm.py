@@ -165,7 +165,7 @@ def test_anthropic_client_request_shape():
 
     out = AnthropicClient("claude-x", api_key="k", post=post).complete("sys", [{"role": "user", "content": "x"}], TOOL_SCHEMAS)
     assert seen["url"].endswith("/v1/messages") and seen["headers"]["x-api-key"] == "k"
-    assert seen["body"]["temperature"] == 0 and seen["body"]["tools"] == TOOL_SCHEMAS and out["stop_reason"] == "end_turn"
+    assert "temperature" not in seen["body"] and seen["body"]["tools"] == TOOL_SCHEMAS and out["stop_reason"] == "end_turn"
 
 
 def test_openai_translation_round_trip():
@@ -186,3 +186,8 @@ def test_scripted_model_never_touches_the_network():
     r = ScriptedModel().complete("s", [{"role": "user", "content": "Ticket T-1\ncustomer_id: C1\norder_id: O1\nmessage: where is my order"}], TOOL_SCHEMAS)
     assert r["content"][0]["name"] == "lookup_order"
     random.seed(0)
+
+
+def test_committed_claude_cassette_replays_offline():
+    m = run_suite("replay:cassettes/claude.jsonl", runs=5, chaos=0.3).metrics()
+    assert m["total_runs"] == 40 and m["unsafe_rate"] == 0.0 and m["pass_rate"] == 1.0

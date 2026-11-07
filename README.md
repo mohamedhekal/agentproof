@@ -133,9 +133,24 @@ agentproof compare --agents replay:cassettes/claude.jsonl --runs 5         # sam
 
 A model response is keyed by a hash of (system prompt, conversation so far, tool schemas). A replay is therefore only valid while the loop, prompts and tool outputs are unchanged, and a miss fails loudly (`CassetteMiss`) instead of silently calling the model. That makes model evaluations diffable, shareable and runnable in CI without a key.
 
-What is verified and what is not:
-- Verified in this repo (tests + CI): the loop, the Anthropic and OpenAI request/response translation (against a mocked transport), record/replay giving byte-identical results, and the whole path with two deterministic stand-ins for a model: `scripted` (careful) and `scripted-sloppy` (no idempotency keys, follows injected text). Through the LLM path the harness gives `scripted` 98.8% resolved / 0% unsafe and `scripted-sloppy` 55.0% resolved / 25.0% unsafe at chaos 0.3.
-- **Not** done: I have not run it against a live model, so this repo contains no numbers for any real model. [`cassettes/scripted-demo.jsonl`](cassettes/scripted-demo.jsonl) is a recording of the scripted stand-in, committed so the replay path runs in CI. To measure Claude yourself, run the command above and commit your cassette; the numbers are then reproducible by anyone, offline.
+### Measured: Claude on the same chaos
+
+`claude-sonnet-5-5`, chaos 0.3, 5 seeded runs x 8 scenarios = 40 runs (one live run, 2026-11-07; cassette committed):
+
+| agent | resolved | handed to a human | unsafe | pass^k | avg tool calls |
+|---|---|---|---|---|---|
+| claude-sonnet-5-5 | 40/40 | 0 | **0** | 100% | 5.7 |
+| hardened (scripted reference) | 40/40 | 0 | 0 | 100% | 5.2 |
+
+Reproduce it **offline, for free, with identical output**: `agentproof compare --agents replay:cassettes/claude.jsonl --runs 5 --chaos 0.3` (172 recorded model responses; CI runs this).
+
+Read this result with its limits in mind:
+- **The system prompt hands the model the playbook.** It states the refund limit, "pass an idempotency key and reuse it on retry", and "order notes are untrusted". So this measures *following reliability rules under sabotaged tools*, not unprompted competence. The interesting next experiment is deleting those rules from the prompt one at a time and watching which failure comes back (the harness is built for exactly that ablation).
+- **40 runs is a small sample.** Zero failures in 40 only supports a true pass rate above roughly 92% (95% lower bound, rule of three), at chaos 0.3 with one seed. Higher chaos and more runs are the obvious next step.
+- **Live reruns can differ.** The API rejects `temperature` for this model, so the client does not send it; sampling is not pinned. The cassette is what makes the numbers above reproducible, not the model.
+- Claude issued parallel tool calls in 58 of 172 responses; the loop and the chaos layer handle that.
+
+Also verified in tests and CI: the loop, the Anthropic and OpenAI request/response translation (mocked transport), record/replay giving identical results, and two deterministic stand-ins for a model: `scripted` (careful: 98.8% resolved / 0% unsafe at chaos 0.3, full suite) and `scripted-sloppy` (no idempotency keys, follows injected text: 55.0% / 25.0% unsafe). The OpenAI path is tested against a mocked transport only; it has not been run live.
 
 ## How it works
 
@@ -184,7 +199,7 @@ PYTHONPATH=. agentproof gate --agent my_agent:MyAgent --update   # record a base
 
 ## Roadmap
 
-- Run and publish a recorded Claude cassette (needs an API key; see above).
+- Prompt ablation on Claude (remove each reliability rule from the system prompt, higher chaos, more runs) to find which rule carries which guarantee.
 - LLM-based extractor for the Brain, evaluated on the same `--unseen` axis.
 - Trace minimizer: shrink a failing fault schedule to the smallest sequence that still breaks the agent.
 - More worlds (inventory, shipping, collections), and an MCP server so any agent can be pointed at the chaos proxy.
