@@ -1,0 +1,30 @@
+# CITATION.cff: how to cite AgentProof (https://citation-file-format.github.io/)
+# Only verified facts are recorded. There is deliberately NO doi, orcid, publication or registration number:
+# none exists yet. Add them here only after you actually obtain them (see docs/RELEASE_CHECKLIST.md).
+cff-version: 1.2.0
+message: "If you use AgentProof in research or when evaluating an agent, please cite it as below."
+type: software
+title: "AgentProof: chaos testing, state-based grading and replay for AI agents"
+abstract: >-
+  AgentProof is a zero-dependency Python harness for evaluating AI agents that take real actions.
+  It injects production-style tool failures, grades the final state of a simulated world instead of
+  the transcript, records every run so failures can be replayed, and provides a CI reliability gate.
+  It also includes a bitemporal memory module with provenance and a calibrated human-in-the-loop router.
+authors:
+  - family-names: Hekal
+    given-names: Mohamed
+    email: mohamed.k.hekal@gmail.com
+repository-code: "https://github.com/mohamedhekal/agentproof"
+url: "https://github.com/mohamedhekal/agentproof"
+license: MIT
+version: 0.1.0
+commit: 57a3fc9e685c7358bdf81b404b0ed8fb126d9840
+date-released: "2026-11-07"
+keywords:
+  - ai agents
+  - evaluation
+  - chaos engineering
+  - reliability
+  - safety
+  - llm
+  - reproducibility

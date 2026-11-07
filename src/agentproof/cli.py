@@ -191,6 +191,29 @@ def cmd_brain(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_redact(a: argparse.Namespace) -> int:
+    from collections import Counter
+
+    from .redact import redact_file
+
+    total: Counter = Counter()
+    for p in a.paths:
+        src = Path(p)
+        if a.check:
+            counts = redact_file(src, None)
+        elif a.in_place:
+            counts = redact_file(src, src)
+        else:
+            counts = redact_file(src, Path(a.out_dir) / src.name)
+        total += counts
+        print(f"{p}: " + (", ".join(f"{k} x{v}" for k, v in sorted(counts.items())) or "nothing found"))
+    if a.check:
+        return 1 if total else 0
+    where = "in place" if a.in_place else f"to {a.out_dir}/"
+    print(f"\nredacted {sum(total.values())} item(s) {where}. Pattern-based: review the output before sharing.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="agentproof", description="Prove your agent survives production, not just the demo.")
     p.add_argument("--version", action="version", version=__version__)
@@ -243,6 +266,13 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--unseen", type=float, nargs="+", default=[0.0, 0.15, 0.3], help="share of messages using phrasing the extractor never saw")
     sp.add_argument("--explain", nargs=2, metavar=("CLIENT", "ATTR"), help="print the audit trail for one client attribute")
     sp.set_defaults(fn=cmd_brain)
+
+    sp = sub.add_parser("redact", help="remove secrets and personal data (keys, emails, phones, cards) from traces and cassettes")
+    sp.add_argument("paths", nargs="+")
+    sp.add_argument("--out-dir", default="redacted", help="write redacted copies here (default: redacted/)")
+    sp.add_argument("--in-place", action="store_true", help="overwrite the files")
+    sp.add_argument("--check", action="store_true", help="write nothing; exit 1 if anything would be redacted")
+    sp.set_defaults(fn=cmd_redact)
 
     args = p.parse_args(argv)
     return args.fn(args)

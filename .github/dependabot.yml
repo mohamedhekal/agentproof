@@ -1,0 +1,13 @@
+# Dependabot opens pull requests for outdated GitHub Actions and Python dev dependencies.
+# It never merges anything by itself. (Enabling "Dependabot security updates" in the repository
+# settings is a separate, manual step: see docs/RELEASE_CHECKLIST.md.)
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly

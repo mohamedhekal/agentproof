@@ -86,6 +86,8 @@ The whole idea, in the order you would explain it to someone. (Slides are part o
 | Case study: three ways an agent double-refunds | [docs/CASE_STUDY.md](docs/CASE_STUDY.md) | [docs/ar/CASE_STUDY.ar.md](docs/ar/CASE_STUDY.ar.md) |
 | Prompt ablation on Claude | [docs/ABLATION.md](docs/ABLATION.md) | [docs/ar/ABLATION.ar.md](docs/ar/ABLATION.ar.md) |
 | Deep-dive worksheet | [docs/DEEP_DIVE.md](docs/DEEP_DIVE.md) | [docs/ar/DEEP_DIVE.ar.md](docs/ar/DEEP_DIVE.ar.md) |
+| Governance: [copyright](COPYRIGHT.md), [authors](AUTHORS.md), [trademarks](TRADEMARKS.md), [commercial use](COMMERCIAL.md), [security](SECURITY.md), [contributing](CONTRIBUTING.md), [code of conduct](CODE_OF_CONDUCT.md), [citation](CITATION.cff) | MIT licensed; open core | see the files |
+| IP provenance, open-core architecture, release checklist | [docs/IP_PROVENANCE.md](docs/IP_PROVENANCE.md), [docs/OPEN_CORE_ARCHITECTURE.md](docs/OPEN_CORE_ARCHITECTURE.md), [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) | |
 | Wiki (every page in English and Arabic) | [wiki](https://github.com/mohamedhekal/agentproof/wiki) | [الصفحة الرئيسية](https://github.com/mohamedhekal/agentproof/wiki/Home-AR) |
 
 ## The result
