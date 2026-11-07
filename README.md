@@ -163,7 +163,7 @@ Removing one rule at a time from the system prompt (`claude-sonnet-5-5`, chaos 0
 
 Two findings. (1) Generic engineering hygiene was already in the model, but **business policy (the refund limit) was not**: thresholds belong in code, not only in a prompt. (2) When the API offers no way to make a write safe to retry, Claude **retried a timed-out write immediately in 5 of 5 cases and double-applied it**, and 5 more unsafe outcomes were the platform delivering a write twice, which no prompt can prevent. Both say the same thing: put the guard in the API and the tools, not in the model.
 
-Also verified in tests and CI: the loop, the Anthropic and OpenAI request/response translation (mocked transport), record/replay giving identical results, and two deterministic stand-ins for a model: `scripted` (careful: 98.8% resolved / 0% unsafe at chaos 0.3, full suite) and `scripted-sloppy` (no idempotency keys, follows injected text: 55.0% / 25.0% unsafe). The OpenAI path is tested against a mocked transport only; it has not been run live.
+Also verified in tests and CI: the loop, the Anthropic and OpenAI request/response translation (mocked transport), record/replay giving identical results, and two deterministic stand-ins for a model: `scripted` (careful: 98.8% resolved / 0% unsafe at chaos 0.3, full suite) and `scripted-sloppy` (no idempotency keys, follows injected text: 55.0% / 25.0% unsafe). The OpenAI path is tested over real HTTP against a local server that speaks the Chat Completions protocol and validates the wire format strictly (auth header, tool-call/tool-message pairing, tool schema shape, 429 backoff, malformed tool arguments, refusals; `tests/test_openai_http.py`). It has **not** been run against api.openai.com: there is no OpenAI model measurement in this repo. Set `OPENAI_API_KEY` (and optionally `OPENAI_BASE_URL` for any compatible gateway) and run `agentproof compare --agents openai:<model>` to produce one.
 
 ## How it works
 
@@ -224,7 +224,7 @@ A worksheet for turning real production incidents into a technical deep dive is 
 ## Tests
 
 ```bash
-pip install -e .[dev] && pytest        # 43 tests, ~8 seconds
+pip install -e .[dev] && pytest        # 48 tests, ~8 seconds
 ```
 
 ## About

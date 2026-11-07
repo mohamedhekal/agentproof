@@ -142,7 +142,8 @@ def _post_json(url: str, headers: dict[str, str], body: dict[str, Any], timeout:
 
 
 class AnthropicClient:
-    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json, max_tokens: int = 1024, temperature: float | None = None) -> None:
+    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json, max_tokens: int = 1024, temperature: float | None = None, base_url: str | None = None) -> None:
+        self.base_url = (base_url or os.environ.get("ANTHROPIC_BASE_URL") or "https://api.anthropic.com").rstrip("/")
         # `temperature` is omitted by default: some current models reject it ("deprecated for this model").
         self.model, self.max_tokens, self._post, self.temperature = model, max_tokens, post, temperature
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
@@ -151,7 +152,7 @@ class AnthropicClient:
 
     def complete(self, system: str, messages: list[dict], tools: list[dict]) -> dict:
         r = self._post(
-            "https://api.anthropic.com/v1/messages",
+            f"{self.base_url}/v1/messages",
             {"x-api-key": self.api_key, "anthropic-version": "2023-06-01"},
             {"model": self.model, "max_tokens": self.max_tokens, "system": system, "messages": messages, "tools": tools,
              **({"temperature": self.temperature} if self.temperature is not None else {})},
@@ -160,10 +161,16 @@ class AnthropicClient:
 
 
 class OpenAIClient:
-    """Chat Completions tool-calling, translated to/from the Anthropic block format the loop uses."""
+    """Chat Completions tool-calling, translated to/from the Anthropic block format the loop uses.
 
-    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json) -> None:
-        self.model, self._post = model, post
+    Works with any OpenAI-compatible endpoint (`OPENAI_BASE_URL` or `base_url`). `temperature` is omitted
+    by default because several current models reject it; pass one explicitly if yours accepts it.
+    """
+
+    def __init__(self, model: str, api_key: str | None = None, post: Callable = _post_json,
+                 base_url: str | None = None, temperature: float | None = None) -> None:
+        self.model, self._post, self.temperature = model, post, temperature
+        self.base_url = (base_url or os.environ.get("OPENAI_BASE_URL") or "https://api.openai.com/v1").rstrip("/")
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
         if not self.api_key:
             raise SystemExit("OPENAI_API_KEY is not set")
@@ -192,20 +199,33 @@ class OpenAIClient:
 
     @staticmethod
     def from_openai(resp: dict) -> dict:
-        msg = resp["choices"][0]["message"]
+        choice = resp["choices"][0]
+        msg = choice["message"]
         blocks: list[dict] = []
-        if msg.get("content"):
-            blocks.append({"type": "text", "text": msg["content"]})
+        text = msg.get("content")
+        if isinstance(text, list):  # some compatible servers return content parts
+            text = " ".join(p.get("text", "") for p in text if isinstance(p, dict))
+        if text:
+            blocks.append({"type": "text", "text": text})
+        elif msg.get("refusal"):
+            blocks.append({"type": "text", "text": f"[refusal] {msg['refusal']}"})
         for c in msg.get("tool_calls") or []:
-            blocks.append({"type": "tool_use", "id": c["id"], "name": c["function"]["name"], "input": json.loads(c["function"]["arguments"] or "{}")})
+            raw = c["function"].get("arguments") or "{}"
+            try:
+                args = json.loads(raw)
+                if not isinstance(args, dict):
+                    raise ValueError("arguments must be an object")
+            except ValueError:
+                args = {"__invalid_json__": str(raw)[:200]}  # surfaces as a tool error the model can correct
+            blocks.append({"type": "tool_use", "id": c["id"], "name": c["function"]["name"], "input": args})
         return {"content": blocks, "stop_reason": "tool_use" if msg.get("tool_calls") else "end_turn"}
 
     def complete(self, system: str, messages: list[dict], tools: list[dict]) -> dict:
         msgs, fns = self.to_openai(system, messages, tools)
         r = self._post(
-            "https://api.openai.com/v1/chat/completions",
+            f"{self.base_url}/chat/completions",
             {"authorization": f"Bearer {self.api_key}"},
-            {"model": self.model, "temperature": 0, "messages": msgs, "tools": fns},
+            {"model": self.model, "messages": msgs, "tools": fns, **({"temperature": self.temperature} if self.temperature is not None else {})},
         )
         return self.from_openai(r)
 
