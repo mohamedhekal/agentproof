@@ -37,7 +37,7 @@ AgentProof هو **flight simulator للـ agents اللي بتتصرف فعلا�
 
 ## الـ pitch في 12 شريحة
 
-الشرايح نفسها موجودة في الريبو ([docs/pitch](docs/pitch)).
+الشرايح نفسها موجودة في الريبو ([docs/pitch](docs/pitch))، ونسخة [PDF](docs/pitch/AgentProof-pitch-deck.pdf) للتحميل.
 
 </div>
 

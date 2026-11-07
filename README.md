@@ -30,7 +30,7 @@ Everything is seeded and deterministic. Every number below is reproducible with 
 
 ## The pitch in 12 slides
 
-The whole idea, in the order you would explain it to someone. (Slides are part of the repo: [docs/pitch](docs/pitch).)
+The whole idea, in the order you would explain it to someone. (Slides are part of the repo: [docs/pitch](docs/pitch). Download the full deck as a [PDF](docs/pitch/AgentProof-pitch-deck.pdf).)
 
 <table>
 <tr>
