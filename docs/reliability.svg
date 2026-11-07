@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400" width="760" height="400" role="img" aria-label="Reliability under chaos: same tasks, same faults">
+<rect width="760" height="400" rx="14" fill="#ffffff" stroke="#e3e6ea"/>
+<text x="64" y="30" font-family="Helvetica,Arial,sans-serif" font-size="17" font-weight="700" fill="#14181f">Reliability under chaos: same tasks, same faults</text>
+<text x="64" y="48" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#5b6572">solid = tickets fully resolved   dashed = unsafe actions (double refunds, policy breaks)</text>
+<line x1="64" y1="344" x2="736" y2="344" stroke="#eef0f3"/>
+<text x="54" y="348" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0%</text>
+<line x1="64" y1="274.0" x2="736" y2="274.0" stroke="#eef0f3"/>
+<text x="54" y="278.0" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">25%</text>
+<line x1="64" y1="204.0" x2="736" y2="204.0" stroke="#eef0f3"/>
+<text x="54" y="208.0" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">50%</text>
+<line x1="64" y1="134.0" x2="736" y2="134.0" stroke="#eef0f3"/>
+<text x="54" y="138.0" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">75%</text>
+<line x1="64" y1="64" x2="736" y2="64" stroke="#eef0f3"/>
+<text x="54" y="68" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">100%</text>
+<text x="64.0" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.00</text>
+<text x="198.4" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.10</text>
+<text x="332.8" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.20</text>
+<text x="467.2" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.30</text>
+<text x="601.6" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.40</text>
+<text x="736.0" y="364" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#5b6572">0.50</text>
+<text x="400.0" y="386" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#14181f">chaos level (probability that any tool call is sabotaged)</text>
+<polyline points="64.0,169.0 198.4,177.7 332.8,183.0 467.2,186.5 601.6,202.3 736.0,216.3" fill="none" stroke="#d9534f" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="64.0,274.0 198.4,272.3 332.8,268.8 467.2,265.3 601.6,267.0 736.0,265.3" fill="none" stroke="#d9534f" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>
+<circle cx="64.0" cy="169.0" r="4" fill="#d9534f"/>
+<circle cx="198.4" cy="177.7" r="4" fill="#d9534f"/>
+<circle cx="332.8" cy="183.0" r="4" fill="#d9534f"/>
+<circle cx="467.2" cy="186.5" r="4" fill="#d9534f"/>
+<circle cx="601.6" cy="202.3" r="4" fill="#d9534f"/>
+<circle cx="736.0" cy="216.3" r="4" fill="#d9534f"/>
+<rect x="586" y="72" width="12" height="12" rx="3" fill="#d9534f"/>
+<text x="606" y="83" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#14181f">naive</text>
+<polyline points="64.0,64.0 198.4,64.0 332.8,64.0 467.2,67.5 601.6,74.5 736.0,79.8" fill="none" stroke="#1f9d6b" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="64.0,344.0 198.4,344.0 332.8,344.0 467.2,344.0 601.6,344.0 736.0,344.0" fill="none" stroke="#1f9d6b" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>
+<circle cx="64.0" cy="64.0" r="4" fill="#1f9d6b"/>
+<circle cx="198.4" cy="64.0" r="4" fill="#1f9d6b"/>
+<circle cx="332.8" cy="64.0" r="4" fill="#1f9d6b"/>
+<circle cx="467.2" cy="67.5" r="4" fill="#1f9d6b"/>
+<circle cx="601.6" cy="74.5" r="4" fill="#1f9d6b"/>
+<circle cx="736.0" cy="79.8" r="4" fill="#1f9d6b"/>
+<rect x="586" y="94" width="12" height="12" rx="3" fill="#1f9d6b"/>
+<text x="606" y="105" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#14181f">hardened</text>
+</svg>
