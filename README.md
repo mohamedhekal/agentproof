@@ -150,6 +150,19 @@ Read this result with its limits in mind:
 - **Live reruns can differ.** The API rejects `temperature` for this model, so the client does not send it; sampling is not pinned. The cassette is what makes the numbers above reproducible, not the model.
 - Claude issued parallel tool calls in 58 of 172 responses; the loop and the chaos layer handle that.
 
+### Which rule was Claude relying on? (prompt ablation)
+
+Removing one rule at a time from the system prompt (`claude-sonnet-5-5`, chaos 0.3, 48 runs per variant, every cassette committed and replayable offline). Full write-up with the limits: [docs/ABLATION.md](docs/ABLATION.md).
+
+| what was removed | resolved | unsafe |
+|---|---|---|
+| nothing (full prompt) | 100% | 0% |
+| idempotency / untrusted-notes / no-double-refund / retry rules | 98-100% | 0% |
+| **the refund-limit rule** | 75.0% | **12.5%** (6/6 high-value refunds issued with no approval) |
+| **the API's idempotency-key parameter itself** | 87.5% (chaos 0.3), 81.2% (0.5) | **10.4%** at both levels |
+
+Two findings. (1) Generic engineering hygiene was already in the model, but **business policy (the refund limit) was not**: thresholds belong in code, not only in a prompt. (2) When the API offers no way to make a write safe to retry, Claude **retried a timed-out write immediately in 5 of 5 cases and double-applied it**, and 5 more unsafe outcomes were the platform delivering a write twice, which no prompt can prevent. Both say the same thing: put the guard in the API and the tools, not in the model.
+
 Also verified in tests and CI: the loop, the Anthropic and OpenAI request/response translation (mocked transport), record/replay giving identical results, and two deterministic stand-ins for a model: `scripted` (careful: 98.8% resolved / 0% unsafe at chaos 0.3, full suite) and `scripted-sloppy` (no idempotency keys, follows injected text: 55.0% / 25.0% unsafe). The OpenAI path is tested against a mocked transport only; it has not been run live.
 
 ## How it works
@@ -211,7 +224,7 @@ A worksheet for turning real production incidents into a technical deep dive is 
 ## Tests
 
 ```bash
-pip install -e .[dev] && pytest        # 41 tests, ~5 seconds
+pip install -e .[dev] && pytest        # 43 tests, ~8 seconds
 ```
 
 ## About
