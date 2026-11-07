@@ -16,6 +16,12 @@
 
 <div dir="rtl">
 
+## شوف الشرح في 3 دقايق
+
+[![شرح AgentProof (عربي، 3 دقايق)](docs/video/thumb-ar.jpg)](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-AR-final.mp4)
+
+الفكرة كلها والهدف منها في تلات دقايق: [الفيديو بالعربي](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-AR-final.mp4) ([الترجمة](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-AR.srt)) | [English video](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-EN-final.mp4). كل رقم فيه طالع من الريبو ومتكرر بأمر واحد.
+
 ## جرّبه في المتصفح
 
 **[الديمو اللايف](https://mohamedhekal.github.io/agentproof/)**: حرّك سلايدر الـ chaos وشوف agent ساذج وagent محصّن بيتعاملوا مع نفس الـ 8 سيناريوهات، وافتح تشغيلة فاشلة وأعدها، وأعد تشغيلة Claude متسجّلة، من غير ما تثبّت حاجة. بيشغّل الـ package الحقيقي في متصفحك (Python متحوّلة لـ WebAssembly عبر Pyodide): من غير سيرفر ولا API key ولا tracking.

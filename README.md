@@ -15,6 +15,12 @@
 </p>
 
 
+## Watch the 3-minute explainer
+
+[![AgentProof explainer (English, 3 min)](docs/video/thumb-en.jpg)](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-EN-final.mp4)
+
+The whole idea and its goal in three minutes: [English video](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-EN-final.mp4) ([subtitles](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-EN.srt)) | [الفيديو بالعربي](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-AR-final.mp4) ([الترجمة](https://github.com/mohamedhekal/agentproof/releases/download/v0.1.0/AgentProof-AR.srt)). Every number in it comes from this repo and is reproducible.
+
 ## Try it in your browser
 
 **[Live demo](https://mohamedhekal.github.io/agentproof/)**: drag the chaos slider, watch a naive and a hardened agent handle the same 8 support scenarios, open a failing run, replay it, and replay a recorded Claude run, all without installing anything. It runs the real package in your browser (Python compiled to WebAssembly via Pyodide): no server, no API key, no tracking.
