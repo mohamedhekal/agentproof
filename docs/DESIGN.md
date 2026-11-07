@@ -1,5 +1,7 @@
 # Design notes
 
+[النسخة العربية](ar/DESIGN.ar.md) | [Back to README](../README.md)
+
 ## Principles
 
 1. **Grade the world, not the transcript.** An agent saying "I refunded the customer once" is worth nothing. The grader reads the ledger. Every scenario builds a fresh randomized world from a seed and checks the final state.
@@ -38,7 +40,7 @@ For each action class the router keeps the last `window` human verdicts. It acts
 
 ## Limits (read these)
 
-- The reference agents are scripted policies, so these results demonstrate the *harness*, not any model. LLM adapters are on the roadmap.
+- The reference agents are scripted policies, so their results demonstrate the *harness*, not any model. A real model (Claude) was measured separately; see `docs/ABLATION.md` and the README for those results and their limits.
 - The naive agent is a strawman by design. Real agents fail more subtly, which is exactly why the harness exists.
 - The world is small (8 scenarios). The structure scales; the coverage does not yet.
 - The autonomy simulation assumes a human oracle with a fixed approval probability per class. It shows the mechanism works; it does not prove a particular target is right for your business.

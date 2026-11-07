@@ -2,6 +2,19 @@
 
 **Prove your agent survives production, not just the demo.**
 
+<p align="center">
+  <img src="docs/pitch/01_cover.png" alt="AgentProof: prove trust before production" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://github.com/mohamedhekal/agentproof/actions/workflows/ci.yml"><img src="https://github.com/mohamedhekal/agentproof/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="python 3.10+">
+  <img src="https://img.shields.io/badge/runtime%20dependencies-0-brightgreen" alt="zero runtime dependencies">
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT">
+  &nbsp;|&nbsp; <a href="https://github.com/mohamedhekal/agentproof/wiki">Wiki</a> &nbsp;|&nbsp; <a href="README.ar.md">العربية</a>
+</p>
+
+
 Everyone is building agents. Almost nobody can answer the question a real company asks before handing an agent the keys: *will it behave on the fiftieth run as it did on the first, when the network, the tools and the inputs are hostile?*
 
 AgentProof is a small, zero-dependency harness that answers it with numbers:
@@ -14,6 +27,66 @@ AgentProof is a small, zero-dependency harness that answers it with numbers:
 - **Calibrated autonomy**: a router that learns *when a human must be pulled in* and asks less over time without letting bad actions through.
 
 Everything is seeded and deterministic. Every number below is reproducible with one command.
+
+## The pitch in 12 slides
+
+The whole idea, in the order you would explain it to someone. (Slides are part of the repo: [docs/pitch](docs/pitch).)
+
+<table>
+<tr>
+<td width="50%"><img src="docs/pitch/02_problem.png" alt="1. Failure now changes the world"><br><sub><b>1. Failure now changes the world</b></sub></td>
+<td width="50%"><img src="docs/pitch/03_evaluation_gap.png" alt="2. The transcript can look perfect; the ledger can say otherwise"><br><sub><b>2. The transcript can look perfect; the ledger can say otherwise</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/04_solution.png" alt="3. A flight simulator for production agents"><br><sub><b>3. A flight simulator for production agents</b></sub></td>
+<td width="50%"><img src="docs/pitch/05_architecture.png" alt="4. Agent, toolbox, simulated world, grader"><br><sub><b>4. Agent, toolbox, simulated world, grader</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/06_chaos_engine.png" alt="5. The failures production really ships"><br><sub><b>5. The failures production really ships</b></sub></td>
+<td width="50%"><img src="docs/pitch/07_outcomes.png" alt="6. Three outcomes, two separate truths"><br><sub><b>6. Three outcomes, two separate truths</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/08_scripted_evidence.png" alt="7. Measured: scripted policies (160 runs each)"><br><sub><b>7. Measured: scripted policies (160 runs each)</b></sub></td>
+<td width="50%"><img src="docs/pitch/09_llm_evidence.png" alt="8. Measured: a live LLM, recorded and replayable"><br><sub><b>8. Measured: a live LLM, recorded and replayable</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/10_replay.png" alt="9. A failure you cannot reproduce becomes a test you can rerun"><br><sub><b>9. A failure you cannot reproduce becomes a test you can rerun</b></sub></td>
+<td width="50%"><img src="docs/pitch/11_company_brain.png" alt="10. Memory that survives corrections"><br><sub><b>10. Memory that survives corrections</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/12_autonomy.png" alt="11. Automation needs judgment, not just a threshold"><br><sub><b>11. Automation needs judgment, not just a threshold</b></sub></td>
+<td width="50%"><img src="docs/pitch/16_roadmap.png" alt="12. Roadmap: from proof of concept to trust infrastructure"><br><sub><b>12. Roadmap: from proof of concept to trust infrastructure</b></sub></td>
+</tr>
+</table>
+
+<details>
+<summary>The rest of the deck: target workflows, proposed commercial model, go-to-market plan, closing</summary>
+
+<table>
+<tr>
+<td width="50%"><img src="docs/pitch/13_use_cases.png" alt="Target workflows"><br><sub><b>Target workflows</b></sub></td>
+<td width="50%"><img src="docs/pitch/14_business_model.png" alt="Proposed commercial model (a proposal, not revenue or traction)"><br><sub><b>Proposed commercial model (a proposal, not revenue or traction)</b></sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/pitch/15_gtm.png" alt="Go-to-market plan"><br><sub><b>Go-to-market plan</b></sub></td>
+<td width="50%"><img src="docs/pitch/17_closing.png" alt="Trust is not a prompt. It is a test."><br><sub><b>Trust is not a prompt. It is a test.</b></sub></td>
+</tr>
+</table>
+
+</details>
+
+> The deck states its own limits: the scripted agents are not LLM benchmarks, the live-LLM result is 40 simulations with a policy-rich prompt, the Brain result is on invented messages with rule-based extraction, the autonomy result is a simulation, and the business-model slide is a proposal. The sections below give the numbers and how to reproduce each one.
+
+## Documentation
+
+| topic | English | العربية |
+|---|---|---|
+| Overview and quickstart | this README | [README.ar.md](README.ar.md) |
+| Design principles, fault model, invariants | [docs/DESIGN.md](docs/DESIGN.md) | [docs/ar/DESIGN.ar.md](docs/ar/DESIGN.ar.md) |
+| Case study: three ways an agent double-refunds | [docs/CASE_STUDY.md](docs/CASE_STUDY.md) | [docs/ar/CASE_STUDY.ar.md](docs/ar/CASE_STUDY.ar.md) |
+| Prompt ablation on Claude | [docs/ABLATION.md](docs/ABLATION.md) | [docs/ar/ABLATION.ar.md](docs/ar/ABLATION.ar.md) |
+| Deep-dive worksheet | [docs/DEEP_DIVE.md](docs/DEEP_DIVE.md) | [docs/ar/DEEP_DIVE.ar.md](docs/ar/DEEP_DIVE.ar.md) |
+| Wiki (every page in English and Arabic) | [wiki](https://github.com/mohamedhekal/agentproof/wiki) | [الصفحة الرئيسية](https://github.com/mohamedhekal/agentproof/wiki/Home-AR) |
 
 ## The result
 

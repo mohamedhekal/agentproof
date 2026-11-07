@@ -1,5 +1,7 @@
 # Prompt ablation on Claude: which rule carries which guarantee
 
+[النسخة العربية](ar/ABLATION.ar.md) | [Back to README](../README.md)
+
 Model: `claude-sonnet-5-5`. Same 8 scenarios, same seeded chaos (0.3 unless noted), **6 runs per scenario = 48 runs per variant**, one live run on 2026-11-07. Every row has a committed cassette in `cassettes/ablation/` and replays offline, byte for byte:
 
 ```bash

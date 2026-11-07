@@ -1,5 +1,7 @@
 # Deep-dive worksheet: "an agent system I shipped: what broke, what I measured"
 
+[النسخة العربية](ar/DEEP_DIVE.ar.md) | [Back to README](../README.md)
+
 A **worksheet, not a story**. Facts and numbers must come from the production system; nothing here is invented. Fill every blank with something you can show (a log line, a dashboard, a commit, a query). If you cannot show it, cut it. A long technical deep dive rewards the person who can say "here is the query" and punishes the one who says "roughly".
 
 Keep your filled-in copy **outside** any public repository: it will contain real incident details.

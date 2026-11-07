@@ -1,5 +1,7 @@
 # Case study: three ways a support agent double-refunds, and what chaos testing can and cannot tell you
 
+[النسخة العربية](ar/CASE_STUDY.ar.md) | [Back to README](../README.md)
+
 > Everything below happened in **Shop-Sim**, the simulated store in this repo, with the two scripted reference agents. It is not a production incident. Every number is reproducible with the command next to it (seeded, deterministic).
 
 ## The question
