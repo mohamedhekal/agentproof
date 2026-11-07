@@ -53,9 +53,12 @@ def md_report(ms: list[dict]) -> str:
 
 # ------------------------------------------------------------------ commands
 def cmd_compare(a: argparse.Namespace) -> int:
+    from .scenarios import by_name
+
+    only = [by_name(n) for n in a.scenarios] if a.scenarios else None
     ms = []
     for spec in a.agents:
-        suite = run_suite(spec, a.runs, a.chaos, a.seed)
+        suite = run_suite(spec, a.runs, a.chaos, a.seed, only)
         ms.append(suite.metrics())
         if a.traces:
             for r in suite.results:
@@ -202,6 +205,7 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--agents", nargs="+", default=["naive", "hardened"], help="naive | hardened | module:Class")
     sp.add_argument("--out", help="write latest.md / latest.json here")
     sp.add_argument("--traces", help="save a replayable trace of every non-passing run here")
+    sp.add_argument("--scenarios", nargs="+", help="only these scenarios (default: all 8)")
     common(sp)
     sp.set_defaults(fn=cmd_compare)
 

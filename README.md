@@ -189,6 +189,8 @@ PYTHONPATH=. agentproof gate --agent my_agent:MyAgent --update   # record a base
 - Trace minimizer: shrink a failing fault schedule to the smallest sequence that still breaks the agent.
 - More worlds (inventory, shipping, collections), and an MCP server so any agent can be pointed at the chaos proxy.
 
+Read the write-up: [docs/CASE_STUDY.md](docs/CASE_STUDY.md) (three ways a support agent double-refunds, with the numbers decomposed).
+
 A worksheet for turning real production incidents into a technical deep dive is in [docs/DEEP_DIVE.md](docs/DEEP_DIVE.md).
 
 ## Tests
