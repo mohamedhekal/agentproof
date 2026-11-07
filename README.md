@@ -47,6 +47,8 @@ agentproof compare --traces traces      # also save a replayable trace of every 
 agentproof sweep --svg docs/reliability.svg
 agentproof autonomy                     # calibrated human-in-the-loop simulation
 agentproof gate                         # CI gate against baseline.json (exit 1 on regression)
+agentproof brain                        # bitemporal memory vs RAG
+agentproof compare --agents scripted scripted-sloppy   # the LLM-agent path, offline
 ```
 
 Look at a failure and replay it:
@@ -84,6 +86,57 @@ A static rule (`ask a human if amount > 500`) cannot tell a safe action from a f
 
 The calibrated router asks a lot here because 3 of the 5 classes really are risky; the point is that it asks about the *right* ones, learns the safe ones, and its ask rate visibly rises right after the drift (`agentproof autonomy` prints the per-window series).
 
+## Company Brain: memory that survives corrections
+
+Agents that run for months need memory that stays *correct* as facts change. The usual answer (embed every message, retrieve top-k) cannot tell a superseded fact from a current one, cannot answer "what did we believe last March?", and cannot tell you where an answer came from.
+
+`agentproof.brain` is a **bitemporal claim log**: every message becomes a claim with a *valid time* (when it is true in the world) and a *system time* (when we learned it, and when we stopped believing it). Corrections, retroactive dates ("effective March 1") and retractions ("ignore my last message") are handled by rewriting beliefs without deleting history. Every answer carries provenance, and same-day disagreements between sources are flagged and resolved by source authority.
+
+```text
+$ agentproof brain --explain "Cairo Textiles" terms
+  O0172 [finance ] heard 2026-01-26  true from 2026-01-26  claim      value='30'  believed
+  O0173 [whatsapp] heard 2026-01-26  true from 2026-01-26  claim      value='60'  believed     <- conflict, finance outranks whatsapp
+  O0309 [finance ] heard 2026-03-19  true from 2026-03-19  claim      value='15'  RETRACTED 2026-06-25
+  O0532 [finance ] heard 2026-06-25  true from 2026-03-19  correction value='30'  believed
+current answer: '30'  (from O0532, finance)
+```
+
+Benchmark: ~540 invented messages per seed (WhatsApp / email / CRM / sales / finance; English and Egyptian Arabic; typos; chatter that mentions clients but states nothing), 300 questions per seed (current value, value *as of* a past date, and what we *believed* on a past date). Mean of 10 seeds. "Tricky" = the client attribute went through a retroactive change, correction, retraction or source conflict.
+
+| system | all questions | tricky | provenance correct | flags conflicts |
+|---|---|---|---|---|
+| **brain** | **99.9%** | **99.8%** | **99.9%** | recall 100% |
+| RAG + recency | 78.4% | 73.4% | 75.5% | never |
+| RAG top-1 | 37.3% | 32.4% | 16.6% | never |
+
+The baselines get a metadata date filter and the same extractor as the brain, so the gap is the architecture, not parsing. **The honest part:** the extractor is rule-based and tuned to the generator's phrasing families, so 99.9% is the ceiling, not a forecast. `--unseen` makes a share of messages use phrasing the extractor has never seen:
+
+| unseen phrasing | brain | RAG + recency | RAG top-1 |
+|---|---|---|---|
+| 0% | 99.9% | 78.4% | 37.3% |
+| 15% | 87.0% | 67.1% | 36.0% |
+| 30% | 76.3% | 59.7% | 35.7% |
+
+The memory model keeps its lead as extraction degrades, and the extractor is a single pluggable function (`extract(text, clients)`): that is where an LLM goes in production. `agentproof brain` reproduces the table.
+
+## LLM agents and cassettes
+
+`agentproof.llm` runs a real tool-use loop against the same chaos, the same graders and the same CI gate:
+
+```bash
+export ANTHROPIC_API_KEY=...                       # or OPENAI_API_KEY for openai:<model>
+AGENTPROOF_CASSETTE=cassettes/claude.jsonl \
+  agentproof compare --agents hardened claude:claude-sonnet-5-5 --runs 5   # records every model response
+
+agentproof compare --agents replay:cassettes/claude.jsonl --runs 5         # same evaluation, offline, free, identical
+```
+
+A model response is keyed by a hash of (system prompt, conversation so far, tool schemas). A replay is therefore only valid while the loop, prompts and tool outputs are unchanged, and a miss fails loudly (`CassetteMiss`) instead of silently calling the model. That makes model evaluations diffable, shareable and runnable in CI without a key.
+
+What is verified and what is not:
+- Verified in this repo (tests + CI): the loop, the Anthropic and OpenAI request/response translation (against a mocked transport), record/replay giving byte-identical results, and the whole path with two deterministic stand-ins for a model: `scripted` (careful) and `scripted-sloppy` (no idempotency keys, follows injected text). Through the LLM path the harness gives `scripted` 98.8% resolved / 0% unsafe and `scripted-sloppy` 55.0% resolved / 25.0% unsafe at chaos 0.3.
+- **Not** done: I have not run it against a live model, so this repo contains no numbers for any real model. [`cassettes/scripted-demo.jsonl`](cassettes/scripted-demo.jsonl) is a recording of the scripted stand-in, committed so the replay path runs in CI. To measure Claude yourself, run the command above and commit your cassette; the numbers are then reproducible by anyone, offline.
+
 ## How it works
 
 ```
@@ -100,6 +153,8 @@ agent  ->  ToolBox (chaos + recorder)  ->  World (ground truth)
 | Reference agents | `agents.py` | `naive` vs `hardened` |
 | Runner, metrics, replay | `runner.py` | pass / safe_fail / unsafe, pass^k, flaky scenarios, failure reasons |
 | Autonomy router | `trust.py` | Wilson-bound approval learning with audits and drift fallback |
+| Company Brain | `brain/` | bitemporal claim log, provenance, conflict resolution; synthetic benchmark + RAG baselines |
+| LLM adapter | `llm.py` | Anthropic / OpenAI tool-use loop, record/replay cassettes, offline model stand-ins |
 | CI gate | `cli.py` | non-zero exit when unsafe rate rises or resolution rate / any scenario regresses |
 
 More in [docs/DESIGN.md](docs/DESIGN.md).
@@ -129,15 +184,17 @@ PYTHONPATH=. agentproof gate --agent my_agent:MyAgent --update   # record a base
 
 ## Roadmap
 
-- LLM adapters (Anthropic / OpenAI tool-use loops) with recorded model responses, so LLM agents get the same replay.
+- Run and publish a recorded Claude cassette (needs an API key; see above).
+- LLM-based extractor for the Brain, evaluated on the same `--unseen` axis.
 - Trace minimizer: shrink a failing fault schedule to the smallest sequence that still breaks the agent.
-- Company-brain eval: bitemporal facts, contradiction detection and provenance on messy multi-month operational data, compared against naive RAG.
 - More worlds (inventory, shipping, collections), and an MCP server so any agent can be pointed at the chaos proxy.
+
+A worksheet for turning real production incidents into a technical deep dive is in [docs/DEEP_DIVE.md](docs/DEEP_DIVE.md).
 
 ## Tests
 
 ```bash
-pip install -e .[dev] && pytest        # 18 tests; runs in under a second
+pip install -e .[dev] && pytest        # 41 tests, ~5 seconds
 ```
 
 ## About

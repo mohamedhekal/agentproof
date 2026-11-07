@@ -153,6 +153,41 @@ def cmd_autonomy(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_brain(a: argparse.Namespace) -> int:
+    import statistics as st
+
+    from .brain.evaluate import evaluate
+    from .brain.store import Brain
+    from .brain.synth import generate
+
+    if a.explain:
+        ds = generate(a.seed)
+        client, attr = a.explain
+        b = Brain(ds.clients)
+        for o in ds.observations:
+            b.ingest(o)
+        print(f"audit trail: {client} / {attr}  (every claim we ever heard, newest last)\n")
+        for c in b.history(client, attr):
+            state = f"RETRACTED {c.retracted_at}" if c.retracted_at else "believed"
+            print(f"  {c.obs_id} [{c.source:8s}] heard {c.recorded_at}  true from {c.valid_from}  {c.kind:10s} value={c.value!r:16} {state}")
+            print(f"           \"{c.quote}\"")
+        ans = b.get(client, attr, ds.end, ds.end)
+        if ans:
+            print(f"\ncurrent answer: {ans.value!r}  (from {ans.obs_id}, {ans.source}){'  CONFLICTED' if ans.conflicted else ''}")
+        return 0
+    rows = []
+    for u in a.unseen:
+        rs = [evaluate(s, unseen=u) for s in range(a.seed, a.seed + a.seeds)]
+        for name in rs[0]["systems"]:
+            m = lambda k: st.mean(r["systems"][name][k] for r in rs)  # noqa: E731
+            rows.append([f"{u:.0%}", name, pct(m("all")), pct(m("tricky")), pct(m("valid_at")), pct(m("belief_at")), pct(m("provenance"))])
+    print(f"{rs[0]['observations']} messages, {rs[0]['questions']} questions per seed, mean of {a.seeds} seeds\n")
+    print(table(rows, ["unseen phrasing", "system", "all", "tricky", "valid-at", "belief-at", "provenance"]))
+    cr = [r["systems"]["brain"]["conflict_recall"] for r in rs if r["systems"]["brain"]["conflict_recall"] is not None]
+    print(f"\nbrain conflict recall (last setting): {pct(st.mean(cr)) if cr else 'n/a'}; RAG never flags conflicts (0%)")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="agentproof", description="Prove your agent survives production, not just the demo.")
     p.add_argument("--version", action="version", version=__version__)
@@ -197,6 +232,13 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--n", type=int, default=4000)
     sp.add_argument("--seed", type=int, default=7)
     sp.set_defaults(fn=cmd_autonomy)
+
+    sp = sub.add_parser("brain", help="Company Brain (bitemporal memory) vs RAG on synthetic operational history")
+    sp.add_argument("--seeds", type=int, default=10)
+    sp.add_argument("--seed", type=int, default=7)
+    sp.add_argument("--unseen", type=float, nargs="+", default=[0.0, 0.15, 0.3], help="share of messages using phrasing the extractor never saw")
+    sp.add_argument("--explain", nargs=2, metavar=("CLIENT", "ATTR"), help="print the audit trail for one client attribute")
+    sp.set_defaults(fn=cmd_brain)
 
     args = p.parse_args(argv)
     return args.fn(args)

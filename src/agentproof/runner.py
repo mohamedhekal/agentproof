@@ -21,6 +21,11 @@ def load_agent(spec: str) -> type:
     """'naive' | 'hardened' | 'package.module:ClassName' (bring your own agent)."""
     if spec in REGISTRY:
         return REGISTRY[spec]
+    from .llm import build_agent
+
+    built = build_agent(spec)
+    if built is not None:
+        return built
     if ":" not in spec:
         raise SystemExit(f"unknown agent '{spec}'. Use naive, hardened or module:Class")
     mod, cls = spec.split(":", 1)
