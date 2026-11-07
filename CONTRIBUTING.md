@@ -14,6 +14,10 @@ python scripts/check_secrets.py   # no secrets / personal data / private files
 
 If a global pytest plugin on your machine breaks collection, run `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q`.
 
+## The live demo
+
+`docs/demo/` runs the real package in the browser (Pyodide). If you change anything under `src/agentproof/`, run `python scripts/build_demo.py` and commit the regenerated `docs/demo/bundle.json`; a test fails if it is stale. The page must keep saying it is only a demo that explains the idea.
+
 ## What a good pull request does
 
 - Keeps the tests and the reliability gate green. **Do not change recorded results, cassettes or `baseline.json` to make a test pass.** If behaviour legitimately changes, say why in the pull request and regenerate with the documented command so a reviewer can see the diff.

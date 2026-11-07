@@ -15,6 +15,12 @@
 </p>
 
 
+## Try it in your browser
+
+**[Live demo](https://mohamedhekal.github.io/agentproof/)**: drag the chaos slider, watch a naive and a hardened agent handle the same 8 support scenarios, open a failing run, replay it, and replay a recorded Claude run, all without installing anything. It runs the real package in your browser (Python compiled to WebAssembly via Pyodide): no server, no API key, no tracking.
+
+> **This is a demo to explain the idea.** The agents are scripted reference policies on a simulated store; it is not a benchmark of any AI model and it does not test your own agent. All data is synthetic. (The live site is available once GitHub Pages is enabled for this repository; see [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md).)
+
 Everyone is building agents. Almost nobody can answer the question a real company asks before handing an agent the keys: *will it behave on the fiftieth run as it did on the first, when the network, the tools and the inputs are hostile?*
 
 AgentProof is a small, zero-dependency harness that answers it with numbers:

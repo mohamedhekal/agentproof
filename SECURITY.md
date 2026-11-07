@@ -38,5 +38,6 @@ AgentProof runs agents and tools you provide, against a simulated world. Where i
 ## Known gaps (stated honestly)
 
 - Commits and the `v0.1.0` tag are not cryptographically signed; there is no branch protection yet; Dependabot *security updates* are not enabled; no SBOM is published. See [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md).
+- The live demo (`docs/demo/`) runs entirely in the visitor's browser with a strict Content-Security-Policy and executes no user-supplied code, but it loads the pinned Pyodide 0.26.4 runtime from `cdn.jsdelivr.net` without a Subresource Integrity hash yet.
 - Redaction is heuristic. Treat a redacted file as "reviewed by a tool", not "certified clean".
 - No third-party security audit has been performed.

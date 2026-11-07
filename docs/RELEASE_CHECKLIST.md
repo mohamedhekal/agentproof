@@ -35,6 +35,12 @@ What the repository already supports, and the **human actions** still required. 
 - [ ] The contact address in `SECURITY.md`, `CODE_OF_CONDUCT.md`, `COMMERCIAL.md`, `CITATION.cff` and `AUTHORS.md` is a personal Gmail address (mohamed.k.hekal@gmail.com). Consider a project alias (for example on a domain you own) before the project grows, and update those five files together. No phone number is published anywhere in this repository, on purpose.
 - [ ] Add a `LICENSE` file to the **wiki** repository (the intent is MIT; the wiki currently has none).
 
+### Live demo (GitHub Pages)
+- [ ] Settings > Pages > Source: **Deploy from a branch**, branch `main`, folder `/docs`. The demo is then served at `https://mohamedhekal.github.io/agentproof/` (`docs/.nojekyll` stops Jekyll from processing the documentation).
+- [ ] Open the page and click through the five sections once; confirm the banner "A demo to explain the idea" is visible.
+- [ ] After any change under `src/agentproof/`, regenerate the demo bundle (`python scripts/build_demo.py`) and commit `docs/demo/bundle.json`; a test fails if it is stale.
+- [ ] Optional hardening: the page loads the pinned Pyodide 0.26.4 runtime from cdn.jsdelivr.net without a Subresource Integrity hash. Add an `integrity` attribute (and `crossorigin`) once you have verified the hash of that file, or self-host the runtime.
+
 ### Identity and signing
 - [ ] Configure commit/tag signing (GPG or SSH signing key uploaded to GitHub as a *signing key*); then `git tag -s`.
 - [ ] Optionally use a GitHub `noreply` address for future commits.
